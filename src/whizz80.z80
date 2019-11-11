@@ -1,12 +1,65 @@
 ; ============================
 ; Whizz80 computer source code
 ; ============================
-	.org $0			; Reset Vector
-	jp start
+
+; Memory Map
+; ---------
+; ROM	$0000-$7FFF
+; RAM   $8000-$FFFF
+#TARGET ROM
+#CODE _ROM, $0000, $8000
+
+		.ORG $0			; Reset Vector
+		LD SP, _RAM_end
+		JP START
+
+		.ORG $66		; NMI Vector
+		NOP			; This simply returns from a halt
+		RETN			; - a handy hardware breakpoint
 
 ; ========================
 ; Main program starts here
 ; ========================
-	.org $0100
-start:
-	halt
+		.org $0100
+START:
+		LD B, 'X'
+		CALL UM245R_TX
+		HALT
+		JP START		; Restart the loop
+
+;============
+; Subroutines
+;============
+
+;--------------
+; UM245R Device
+;--------------
+UM245R_IO	.EQU	$00		; i/o on port 1
+UM245R_REG	.EQU	$01		; status register on port 1
+
+; transmit reg B out to the um245r but only when it is ready
+UM245R_TX:
+		PUSH AF
+UM245R_TX_LOOP:
+		IN A, (UM245R_REG)		; read status register          <------+
+		BIT 1, A			; bit 1 set if not ready to tx         |
+		JR NZ, UM245R_TX_LOOP		; not ready, go around the loop again -+
+		LD A, B				; get the character in B
+		OUT (UM245R_IO), A		; output A to the um245r
+		POP AF
+		RET
+
+; receive from the um245r into the B register.
+UM245R_RX:
+		PUSH AF
+UM245R_RX_LOOP:
+		IN A, (UM245R_REG)
+		BIT 0, A
+		JR NZ, UM245R_RX_LOOP
+		IN A, (UM245R_IO)
+		LD B, A
+		POP AF
+		RET
+
+#code _RAM, $8000, $8000
+

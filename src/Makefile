@@ -14,7 +14,7 @@ whizz80: whizz80.hex
 %.rom : %.z80 # compile the asm file to a rom file
 	$(ZASM) $(ZASMOPTS) --bin $<
 	
-.PHONY: clean sim
+.PHONY: clean sim upload
 
 # Clean up 
 clean:
@@ -25,3 +25,6 @@ clean:
 # Launch the z80 simulator, clearing out memory with 0xFF
 sim:
 	z80sim -m FF
+
+upload:
+	minipro -p at28c256 -w whizz80.hex
