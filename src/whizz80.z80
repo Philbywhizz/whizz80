@@ -1,0 +1,12 @@
+; ============================
+; Whizz80 computer source code
+; ============================
+	.org $0			; Reset Vector
+	jp start
+
+; ========================
+; Main program starts here
+; ========================
+	.org $0100
+start:
+	halt
