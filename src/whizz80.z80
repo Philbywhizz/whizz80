@@ -9,39 +9,52 @@
 #TARGET ROM
 #CODE _ROM, $0000, $8000
 
-		.ORG $0			; Reset Vector
+		.ORG $0				; Reset Vector
 		LD SP, _RAM_end
+		CALL UM245R_FLUSH		; Flush anything in the UM245R's buffer
 		JP START
 
-		.ORG $66		; NMI Vector
-		NOP			; This simply returns from a halt
-		RETN			; - a handy hardware breakpoint
+		.ORG $66			; NMI Vector
+		NOP				; This simply returns from a halt
+		RETN				; - a handy hardware breakpoint
 
 ; ========================
 ; Main program starts here
 ; ========================
-		.org $0100
+		.ORG $0100
 START:
-		LD B, 'X'
-		CALL UM245R_TX
-		HALT
-		JP START		; Restart the loop
+		CALL UM245R_RX			; Get input from UM245R to B
+		CALL UM245R_TX			; Print reg B to UM245R
+		JP START			; Restart the loop
 
 ;============
 ; Subroutines
 ;============
 
-;--------------
+;------------------------------------------------------------------------------
 ; UM245R Device
-;--------------
-UM245R_IO	.EQU	$00		; i/o on port 1
-UM245R_REG	.EQU	$01		; status register on port 1
+;------------------------------------------------------------------------------
+UM245R_IO	.EQU	$00			; i/o on port 1
+UM245R_REG	.EQU	$01			; status register on port 1
 
-; transmit reg B out to the um245r but only when it is ready
+; flush the um245r buffer by reading a char in one at a time until empty. crude bit it works 
+UM245R_FLUSH:
+		PUSH AF
+UM245R_FLUSH_LOOP:
+		IN A, (UM245R_REG)		; read status register
+		BIT 0, A			; bit 0 set if buffer empty 
+		JR NZ, UM245R_FLUSH_DONE        ; buffer empty? ----------------------+
+		IN A, (UM245R_IO)		; remove a char from the buffer       |
+		JR UM245R_FLUSH_LOOP		; loop back for next char             |
+UM245R_FLUSH_DONE:				;			       <------+
+		POP AF
+		RET
+
+; emit reg B out to the um245r but only when it is ready to do so
 UM245R_TX:
 		PUSH AF
-UM245R_TX_LOOP:
-		IN A, (UM245R_REG)		; read status register          <------+
+UM245R_TX_LOOP:					;				<------+
+		IN A, (UM245R_REG)		; read status register                 |
 		BIT 1, A			; bit 1 set if not ready to tx         |
 		JR NZ, UM245R_TX_LOOP		; not ready, go around the loop again -+
 		LD A, B				; get the character in B
@@ -49,17 +62,20 @@ UM245R_TX_LOOP:
 		POP AF
 		RET
 
-; receive from the um245r into the B register.
+; receive from the um245r into the B register, will wait until a char is present (blocking).
 UM245R_RX:
 		PUSH AF
-UM245R_RX_LOOP:
-		IN A, (UM245R_REG)
-		BIT 0, A
-		JR NZ, UM245R_RX_LOOP
-		IN A, (UM245R_IO)
-		LD B, A
+UM245R_RX_LOOP:					;				<-----------+
+		IN A, (UM245R_REG)		; read status register                      |
+		BIT 0, A			; bit 0 set if buffer empty                 |
+		JR NZ, UM245R_RX_LOOP		; empty? wait till it contains something ---+
+		IN A, (UM245R_IO)		; grab char from buffer
+		LD B, A				; save to reg B
 		POP AF
 		RET
+;------------------------------------------------------------------------------
 
 #code _RAM, $8000, $8000
 
+		.END
+	
