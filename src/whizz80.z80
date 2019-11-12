@@ -6,11 +6,13 @@
 ; ---------
 ; ROM	$0000-$7FFF
 ; RAM   $8000-$FFFF
-#TARGET ROM
-#CODE _ROM, $0000, $8000
+ROM_START	.EQU	$0000
+ROM_END		.EQU	$7FFF
+RAM_START	.EQU	$8000
+RAM_END		.EQU	$FFFF
 
 		.ORG $0				; Reset Vector
-		LD SP, _RAM_end
+		LD SP, RAM_END + 1		; Set StackPointer to end of RAM + 1
 		CALL UM245R_FLUSH		; Flush anything in the UM245R's buffer
 		JP START
 
@@ -74,8 +76,5 @@ UM245R_RX_LOOP:					;				<-----------+
 		POP AF
 		RET
 ;------------------------------------------------------------------------------
-
-#code _RAM, $8000, $8000
-
 		.END
 	
