@@ -26,5 +26,5 @@ clean:
 sim:
 	z80sim -m FF
 
-upload:
+upload: whizz80.hex
 	minipro -p at28c256 -w whizz80.hex
