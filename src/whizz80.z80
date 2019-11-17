@@ -36,10 +36,10 @@ START:
 ;------------------------------------------------------------------------------
 ; UM245R Device
 ;------------------------------------------------------------------------------
-UM245R_IO	.EQU	$00			; i/o on port 1
+UM245R_IO	.EQU	$00			; i/o on port 0
 UM245R_REG	.EQU	$01			; status register on port 1
 
-; flush the um245r buffer by reading a char in one at a time until empty. crude bit it works 
+; flush the um245r buffer by reading a char in one at a time until empty. crude but it works 
 UM245R_FLUSH:
 		PUSH AF
 UM245R_FLUSH_LOOP:
