@@ -1,0 +1,69 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 74HC14
+D Hex inverter schmitt trigger
+K HCMOS not inverter
+F http://www.ti.com/lit/gpn/sn74HC14
+$ENDCMP
+#
+$CMP AT28C256
+D Paged Parallel EEPROM 256Kb (32K x 8), DIP-28/SOIC-28
+K Parallel EEPROM 256Kb
+F http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf
+$ENDCMP
+#
+$CMP C
+D Unpolarized capacitor
+K cap capacitor
+F ~
+$ENDCMP
+#
+$CMP CP
+D Polarized capacitor
+K cap capacitor
+F ~
+$ENDCMP
+#
+$CMP CY62256N
+D Paged Parallel EEPROM 256Kb (32K x 8), DIP-28/SOIC-28
+K Parallel EEPROM 256Kb
+F http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf
+$ENDCMP
+#
+$CMP Conn_01x24
+D Generic connector, single row, 01x24, script generated (kicad-library-utils/schlib/autogen/connector/)
+K connector
+F ~
+$ENDCMP
+#
+$CMP LED
+D Light emitting diode
+K LED diode
+F ~
+$ENDCMP
+#
+$CMP R
+D Resistor
+K R res resistor
+F ~
+$ENDCMP
+#
+$CMP SW_Push
+D Push button switch, generic, two pins
+K switch normally-open pushbutton push-button
+F ~
+$ENDCMP
+#
+$CMP SW_SP3T
+D Switch, three position, single pole triple throw, 3 position switch, SP3T
+K switch sp3t ON-ON-ON
+F ~
+$ENDCMP
+#
+$CMP Z80CPU
+D 8-bit General Purpose Microprocessor, DIP-40
+K Z80 CPU uP
+F www.zilog.com/manage_directlink.php?filepath=docs/z80/um0080
+$ENDCMP
+#
+#End Doc Library
